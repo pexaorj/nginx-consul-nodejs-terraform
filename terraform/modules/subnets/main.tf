@@ -1,0 +1,9 @@
+variable "vpcid" {}
+variable "regiao" {} 
+variable "cidrblockvpc" {}
+variable "project" {}
+variable "base_block_a" {}
+variable "base_block_c" {}
+variable "routetable_defaulta_id" {}
+variable "routetable_defaultc_id" {}
+variable "routetable_dmz_id" {}
