@@ -7,7 +7,7 @@
 * [Ubuntu Server](https://www.ubuntu.com/download/server)
 * [aws cli](http://docs.aws.amazon.com/pt_br/cli/latest/userguide/installing.html)
 
-### Estrutura do repositorio ###
+### Estrutura do repositório ###
 ```
 ├── docker
 │   ├── docker-nginx-consul
@@ -40,7 +40,7 @@
 
 > Scripts - Contém scripts de stress web e scripts em geral
 
-> Terraform - Utilizado para deployar a arquitura exibida abaixo de forma automatica
+> Terraform - Utilizado para deployar a arquitetura exibida abaixo de forma automática
 
 > Vagrant - Utilizado para levantar uma maquina Ubuntu de testes, semelhante as utilizadas em produção.
 
@@ -49,7 +49,7 @@
 
 1 - Crie sua conta na AWS.
 
-1.1 - Todo o deploy exibido aqui, utiliza a região de N.Virginia que é a que hoje possúi o menor custo na AWS.
+1.1 - Todo o deploy exibido aqui, utiliza a região de N.Virginia que é a que hoje possui o menor custo na AWS.
 
 2 - Crie um bucket no S3 - (a região utilizada neste exemplo é a Norte Virginia - us-east-1)
 
@@ -74,7 +74,7 @@ terraform/gera-chave-ssh.sh
 ```
 
 
-5 - Baixe a versão mais recente do terraform e a inclua no seu PATH de arquivos executaveis, maiores informações em: 
+5 - Baixe a versão mais recente do terraform e a inclua no seu PATH de arquivos executáveis, maiores informações em: 
 * [Terraform](https://www.terraform.io)
 
 6 - Execute o seguinte script para exibir o plano de deploy em sua conta:
@@ -96,7 +96,7 @@ terraform apply
 
 ### Estrutura  ###
 
-A utilização deste repositorio ira disponibilizar uma arquitetura que contém:
+A utilização deste repositório ira disponibilizar uma arquitetura que contém:
 
 1 - Instancia com um balanceador de carga (nginx + consul + consul-template + register)
 
@@ -114,15 +114,15 @@ A utilização deste repositorio ira disponibilizar uma arquitetura que contém:
 
 ### Observações importantes ###
 
-Como este repositorio se propoem apenas a exibição, não foram implementados os seguintes aspectos:
+Como este repositório se propõem apenas a exibição, não foram implementados os seguintes aspectos:
 
 - ELB para distribuir a carga entre os servidores Frontend
 - Instancia de Nat na Zona C
 - Auto Scaling group para levantar mais instancias de FrontEnd e Backend
--- O ASG também é reponsável por subir novas instancias em caso de erro e substituir as instancias com problema, tornando elas efemeras.
+-- O ASG também é responsável por subir novas instancias em caso de erro e substituir as instancias com problema, tornando elas efêmeras.
 - Bastion Host (que nesta arquitetura é a instancia de Nginx)
 - ELK, graylog, etc para tratamento dos logs de forma centralizada;
-- Goaccess para vialização de logs em tempo real
+- Goaccess para visualização de logs em tempo real
 
 
 Utilizados as informações contidas aqui, é fácil e rápida a implementação de tais funcionalidades.
@@ -131,7 +131,7 @@ Utilizados as informações contidas aqui, é fácil e rápida a implementação
 
 Para testar a arquitetura:
 
-No primeiro deploy, é possível que todas as configurações demorem cerca de 10min até estarem disponíveis, isso acontece devido ao servidor de aplicações ficar disponivel antes do servidor consul e não conseguir se registrar, tendo que aguardar assim 5 min até que possa tentar novamente a conexão. Não é recomendavel diminuir este tempo, pois isso pode causar fload na rede desnecessario.
+No primeiro deploy, é possível que todas as configurações demorem cerca de 10min até estarem disponíveis, isso acontece devido ao servidor de aplicações ficar disponível antes do servidor consul e não conseguir se registrar, tendo que aguardar assim 5 min até que possa tentar novamente a conexão. Não é recomendável diminuir este tempo, pois isso pode causar fload na rede desnecessário.
 
 
 Após a aplicação de todos os passos descritos acima:
