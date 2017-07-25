@@ -1,3 +1,7 @@
+MAINTAINER FPereira DevOps "fpereira.rio@gmail.com"
+LABEL Description="Nginx  consul template  register"
+
+
 FROM nginx:latest
 
 RUN apt-get update -y \
