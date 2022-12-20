@@ -43,9 +43,9 @@ The intent here is to put you in a new perspective of how do those things, runni
 
 #### Folders
 
->Docker - contain all files to build docker images
-Scripts - contain all scripts
-Terraform - contain all tf files used to deploy the infrastructure during this demo
+>Docker - contains all files to build docker images
+Scripts - contains all scripts
+Terraform - contains all tf files used to deploy the infrastructure during this demo
 Vagrant - used to build one Ubuntu test machine
 
 
@@ -60,14 +60,14 @@ Vagrant - used to build one Ubuntu test machine
 
 ![nginx-consul-template.png](img/nginx-consul-template.png)
 
- - 1 Instance to work as load balancer with (Nginx + Consul + Consul-template + Register)
+ - 1 Instance to work as a load balancer with (Nginx + Consul + Consul-template + Register)
  - 2 Instances acting as application instances ( Nodejs + Register)
  - 1 Route53 Zone + records to instances interact using dns names instead directly ip's
  - All other things are not described here in detail since it's not the main purpose of this tutorial.
 
-#### Points to pay attention and have in mind
+#### Points to pay attention to and have in mind
 
-As this repository works as an simple example, some important aspects are not covered here, like:
+As this repository works as a simple example, some important aspects are not covered here, like:
 
  - One ELB to split the load between frontend servers
  - High Availability over Nat Instances
@@ -87,7 +87,7 @@ As this repository works as an simple example, some important aspects are not co
 aws config
 ```
 
-4) Open this file `arch-main-state.tf`, and update the bucket name, using the name of the s3 bucket created on the 1 step.
+4) Open this file `arch-main-state.tf`, and update the bucket name, using the name of the s3 bucket created in the 1 step.
 ```hcl
 terraform {
     backend "s3" {
@@ -115,7 +115,7 @@ terraform/gera-chave-ssh.sh
 terraform/makeconfig.sh
 ```
 
-If all ran well and you started to see in the console output all resources that will be created on your AWS account, you can go to the next step, it will apply this code over your AWS account.
+If all ran well and you started to see in the console output all resources that will be created on your AWS account, you can go to the next step, which will apply this code to your AWS account.
 
 7) Apply the code using terraform
 
@@ -123,7 +123,7 @@ If all ran well and you started to see in the console output all resources that 
 terraform apply
 ```
 
-### So far so good, but explain me how it works ###
+### So far so good, but explain to me how it works ###
 
 After performing one `terraform apply`, terraform will start to interact with amazon cli using your api/key to do some instructions to create your described infrastructure using your code.
 It can take a while and you will see all steps from your console output.
@@ -137,8 +137,8 @@ To test this example and check if all those actions worked as expected you shoul
 
 ### Clean up
 
-After perform all tests, remember that maintain resources running on AWS can generate costs to you or to your organisation, so to avoid you any kind of billing problems, remember to delete this stack at the end of your tests, as you saw, using IaC is simple to have the complete environment up and running in a few moments.
+After performing all tests, remember that maintaining resources running on AWS can generate costs for you or your organization, so to avoid any kind of billing problems, remember to delete this stack at the end of your tests, as you saw, using IaC is simple to have the complete environment up and running in a few moments.
 
-To clean running this command:
+To clean run this command:
 `terraform destroy`
 It will ask if you want to perform this action, please type yes.
