@@ -90,21 +90,13 @@ aws config
 4) Open this file `arch-main-state.tf`, and update the bucket name, using the name of the s3 bucket created on the 1 step.
 ```hcl
 terraform {
-
-backend "s3" {
-
-bucket = "CHANGE_IT_HERE"
-
-key = "arch-state/terraform.tfstate"
-
-region = "us-east-1"
-
-shared_credentials_file = "/root/.aws/credentials"
-
-profile = "default"
-
-}
-
+    backend "s3" {
+    bucket = "terraform-chaordic"
+    key    = "arch-state/terraform.tfstate"
+    region = "us-east-1"
+    shared_credentials_file = "/root/.aws/credentials"
+    profile                 = "default"
+  }
 }
 ```
 
