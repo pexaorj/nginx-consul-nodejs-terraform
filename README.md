@@ -88,7 +88,7 @@ aws config
 ```
 
 4) Open this file `arch-main-state.tf`, and update the bucket name, using the name of the s3 bucket created on the 1 step.
-```json
+```hcl
 terraform {
 
 backend "s3" {
