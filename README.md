@@ -1,4 +1,9 @@
-### Ferramentas utilizadas para criar a arquitetura ###
+# Readme First
+
+This repository works as an example of how to create and deploy applications on Amazon AWS using some DevOps tools.
+The intent here is to put you in a new perspective of how do those things, running aways the old fashion of do things manually at AWS console, at the end of this tutorial you will have had deployed at least one simple application on AWS using the new way of do things, called IaC (Infrastructure as code).
+
+### What you will need to use this repository as example ###
 
 * [Nodejs](https://nodejs.org/)
 * [express lib for Nodejs](http://expressjs.com/)
@@ -7,159 +12,142 @@
 * [Ubuntu Server](https://www.ubuntu.com/download/server)
 * [aws cli](http://docs.aws.amazon.com/pt_br/cli/latest/userguide/installing.html)
 
-### Estrutura do repositório ###
+### Repository Structure ###
 ```
 ├── docker
-│   ├── docker-nginx-consul
-│   └── nodejs
+│   ├── docker-nginx-consul
+│   └── nodejs
 ├── scripts
-│   └── stress_test.sh
+│   └── stress_test.sh
 ├── terraform
-│   ├── arch-main-state.tf
-│   ├── gera-chave-ssh.sh
-│   ├── makeconfig.sh
-│   ├── modules
-│   │   ├── eip
-│   │   ├── env
-│   │   ├── instances
-│   │   │   ├── app-instances
-│   │   │   └── arch-instances
-│   │   ├── routes
-│   │   ├── security-group
-│   │   ├── subnets
-│   │   └── vpc
-│   ├── README.md
-│   ├── ssh_keys
-│   │   ├── debug-key
-│   │   └── debug-key.pub
-│   ├── ssh-key.tf
+│   ├── arch-main-state.tf
+│   ├── gera-chave-ssh.sh
+│   ├── makeconfig.sh
+│   ├── modules
+│   │   ├── eip
+│   │   ├── env
+│   │   ├── instances
+│   │   │   ├── app-instances
+│   │   │   └── arch-instances
+│   │   ├── routes
+│   │   ├── security-group
+│   │   ├── subnets
+│   │   └── vpc
+│   ├── README.md
+│   ├── ssh_keys
+│   │   ├── debug-key
+│   │   └── debug-key.pub
+│   ├── ssh-key.tf
 └── vagrant
 ```
-```
-> Docker - Cria as imagens aqui utilizadas
 
-> Scripts - Contém scripts de stress web e scripts em geral
+#### Folders
 
-> Terraform - Utilizado para deployar a arquitetura exibida abaixo de forma automática
+>Docker - contain all files to build docker images
+Scripts - contain all scripts
+Terraform - contain all tf files used to deploy the infrastructure during this demo
+Vagrant - used to build one Ubuntu test machine
 
-> Vagrant - Utilizado para levantar uma maquina Ubuntu de testes, semelhante as utilizadas em produção.
 
-```
-### Pré Requisitos ###
+### Requirements
 
-1 - Crie sua conta na AWS.
+ - One AWS account created
+ - Enough permissions to use this AWS account to deploy this tutorial on N.Virginia Region
+ - Basic knowledge working with AWS
+ - Use bash on your console (this example assume that you are one Linux User or are familiar with bash commands)
 
-1.1 - Todo o deploy exibido aqui, utiliza a região de N.Virginia que é a que hoje possui o menor custo na AWS.
+### What will be deployed ###
 
-2 - Crie um bucket no S3 - (a região utilizada neste exemplo é a Norte Virginia - us-east-1)
+![nginx-consul-template.png](img/nginx-consul-template.png)
 
-2.1 - Crie uma chave para utilização de API nas configurações de IAM
+ - 1 Instance to work as load balancer with (Nginx + Consul + Consul-template + Register)
+ - 2 Instances acting as application instances ( Nodejs + Register)
+ - 1 Route53 Zone + records to instances interact using dns names instead directly ip's
+ - All other things are not described here in detail since it's not the main purpose of this tutorial.
 
-2.2 - Configure seu sistema utilizando a aws_cli, com a chave obtida no passo anterior
+#### Points to pay attention and have in mind
 
+As this repository works as an simple example, some important aspects are not covered here, like:
+
+ - One ELB to split the load between frontend servers
+ - High Availability over Nat Instances
+ - Auto Scaling group
+ - Bastion Host
+ - Log improvements and tools (ELK, graylog, datadog, cloudwatch, etc)
+ 
+
+### Deploy the example Stack.
+
+1) Create one S3 Bucket in N.Virginia (us-east-1) region using the AWS Console
+
+2)Create one IAM user and download the API/key to use during this example
+
+3) Configure your console to use this credential with the command:
 ```
 aws config
 ```
 
-3 - Atualize os seguintes arquivos com o nome do bucket criado
+4) Open this file `arch-main-state.tf`, and update the bucket name, using the name of the s3 bucket created on the 1 step.
+```
+terraform {
 
->chaordic/terraform
-    bucket = "_NOME_DO_BUCKET_CRIADO_"
-    region = "us-east-1"  <- Caso queira utilizar outra região
-	
-4 - Execute o arquivo que gera a chave ssh que será utilizada para acesso aos servidores caso necessário:
+backend "s3" {
+
+bucket = "CHANGE_IT_HERE"
+
+key = "arch-state/terraform.tfstate"
+
+region = "us-east-1"
+
+shared_credentials_file = "/root/.aws/credentials"
+
+profile = "default"
+
+}
+
+}
+```
+
+4) Run this script to generate one SSH Key pair. This key will be used to access all servers if needed.
 
 ```
 terraform/gera-chave-ssh.sh
 ```
 
+5) Download the terraform version 0.9.0
+ `-[terraform_0.9.0](https://releases.hashicorp.com/terraform/0.9.0/)`
 
-5 - Baixe a versão mais recente do terraform e a inclua no seu PATH de arquivos executáveis, maiores informações em: 
-* [Terraform](https://www.terraform.io)
-
-6 - Execute o seguinte script para exibir o plano de deploy em sua conta:
+6) Run this script to perform the planning over your AWS Account.
 
 ```
 terraform/makeconfig.sh
 ```
 
-### Aplicação da arquitetura ###
+If all ran well and you started to see in the console output all resources that will be created on your AWS account, you can go to the next step, it will apply this code over your AWS account.
 
-Caso esteja de acordo:
-
-7 - Faz o deploy da arquitetura proposta na sua conta:
+7) Apply the code using terraform
 
 ```
 terraform apply
 
 ```
 
-### Estrutura  ###
+### So far so good, but explain me how it works ###
 
-A utilização deste repositório ira disponibilizar uma arquitetura que contém:
+After performing one `terraform apply`, terraform will start to interact with amazon cli using your api/key to do some instructions to create your described infrastructure using your code.
+It can take a while and you will see all steps from your console output.
 
-1 - Instancia com um balanceador de carga (nginx + consul + consul-template + register)
+To test this example and check if all those actions worked as expected you should now open your AWS account console and:
 
-2 - Instancias de aplicação (nodejs + register)
-
-3 - Criação de uma zona DNS interna para comunicação entre os servidores
-
-
-> Toda a arquitetura de rede, regras de FW, Zonas DNS, etc serão automaticamente criadas, ela será parecida com a proposta abaixo:
+ - Go to EC2>>Instances and look for the instance of `nginx-web-proxy`, grab the public DNS (ipv4).
+ - Use this address to paste it on your browser URL to get access to this example application.
+ - If you reload the page, you will see 2 responses, each of them coming from one server (in this example we have 2).
 
 
-### Arquitetura proposta ###
+### Clean up
 
-![nginx-consul-template.png](img/nginx-consul-template.png)
+After perform all tests, remember that maintain resources running on AWS can generate costs to you or to your organisation, so to avoid you any kind of billing problems, remember to delete this stack at the end of your tests, as you saw, using IaC is simple to have the complete environment up and running in a few moments.
 
-### Observações importantes ###
-
-Como este repositório se propõem apenas a exibição, não foram implementados os seguintes aspectos:
-
-- ELB para distribuir a carga entre os servidores Frontend
-- Instancia de Nat na Zona C
-- Auto Scaling group para levantar mais instancias de FrontEnd e Backend
--- O ASG também é responsável por subir novas instancias em caso de erro e substituir as instancias com problema, tornando elas efêmeras.
-- Bastion Host (que nesta arquitetura é a instancia de Nginx)
-- ELK, graylog, etc para tratamento dos logs de forma centralizada;
-- Goaccess para visualização de logs em tempo real
-
-
-Utilizados as informações contidas aqui, é fácil e rápida a implementação de tais funcionalidades.
-
-### Como funciona? ###
-
-Para testar a arquitetura:
-
-No primeiro deploy, é possível que todas as configurações demorem cerca de 10min até estarem disponíveis, isso acontece devido ao servidor de aplicações ficar disponível antes do servidor consul e não conseguir se registrar, tendo que aguardar assim 5 min até que possa tentar novamente a conexão. Não é recomendável diminuir este tempo, pois isso pode causar fload na rede desnecessário.
-
-
-Após a aplicação de todos os passos descritos acima:
-
-1) Logue na sua conta AWS, va em ec2>>instances
-- Procure pela instancia "nginx-web-proxy", e pegue o endereço contido em:
-Public DNS (IPv4)
-
-2) Cole o endereço em seu navegador
-
-3) Aperte F5 para verificar o load-balance funcionando
-
-4) Para verificar os serviços no Consul-Server, habilite o seguinte Security-Group na instancia nginx-web-proxy
-
-- tf_df_all_only_for_test
-
-Com ele será liberada a porta 8500 no servidor consul, sendo o acesso feito da seguinte forma:
-
-http://IP_NGINX:8500
-
-### Deploy de nova aplicação ###
-
-1) Vá ao diretório docker
-
-2) Atualize a aplicação "mynode.js"
-
-3) Docker build -t novapp .
-
-4) Suba uma nova instancia node com o no container
-
-4.1) Para rollback, basta voltar a versão do container anterior. O balancer sempre vai se configurar sozinho.
+To clean running this command:
+`terraform destroy`
+It will ask if you want to perform this action, please type yes.
