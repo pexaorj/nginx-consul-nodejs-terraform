@@ -88,7 +88,7 @@ aws config
 ```
 
 4) Open this file `arch-main-state.tf`, and update the bucket name, using the name of the s3 bucket created on the 1 step.
-```
+```json
 terraform {
 
 backend "s3" {
@@ -129,7 +129,6 @@ If all ran well and you started to see in the console output all resources that 
 
 ```
 terraform apply
-
 ```
 
 ### So far so good, but explain me how it works ###
